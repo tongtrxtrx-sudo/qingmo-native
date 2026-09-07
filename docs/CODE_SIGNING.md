@@ -1,8 +1,8 @@
 # Code signing policy
 
-更新日期：2026-09-07。**当前没有已配置的发布签名；SignPath Foundation 尚未申请或获批，项目尚未获得其免费签名赞助。** 本文的后续政策为申请准备草稿，不能作为任何现有文件已经签名的证明。
+更新日期：2026-09-07。**SignPath Foundation 免费签名申请已提交，等待审核；当前尚未获批或配置发布签名。** 本文的后续政策为待启用草稿，不能作为任何现有文件已经签名的证明。
 
-计划申请 [SignPath Foundation](https://signpath.org/) 的开源项目免费签名。是否接纳项目由该机构审核决定；开源或采用 MIT 许可证不代表自动符合资格。申请和配置时必须重新核对 [官方条款](https://signpath.org/terms)。
+已通过 [SignPath Foundation](https://signpath.org/) 申请表提交开源项目免费签名申请，网站显示提交成功。是否接纳项目由该机构审核决定；开源或采用 MIT 许可证不代表自动符合资格。配置时必须重新核对 [官方条款](https://signpath.org/terms)。
 
 ## 启用前需要完成
 
