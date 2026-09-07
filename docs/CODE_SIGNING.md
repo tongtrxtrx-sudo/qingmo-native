@@ -28,7 +28,7 @@
 
 ## 已准备的签名配置
 
-`packaging/signpath.xml` 仅匹配 GitHub 构建产物 ZIP 中的 `QingmoNative.exe`，并检查原始文件名和产品版本。升级产品版本或 ZIP 名称时需同步更新配置。两个上游 DLL 不在签名匹配范围内。
+`packaging/signpath.xml` 仅匹配 GitHub 构建产物 ZIP 中的 `QingmoNative.exe`，并检查原始文件名、产品名称和产品版本。升级产品版本或 ZIP 名称时需同步更新配置。两个上游 DLL 不在签名匹配范围内。
 
 `Sign approved release` 工作流仅允许从 `main` 手动触发，默认跳过签名。获批后，在 SignPath 配置受信任的 GitHub 构建来源和人工审批策略，在 GitHub 的 `release-signing` environment 配置签名提交令牌 `SIGNPATH_API_TOKEN`；令牌不写进源码。对应 variables 为 `SIGNPATH_ORGANIZATION_ID`、`SIGNPATH_PROJECT_SLUG`、`SIGNPATH_SIGNING_POLICY_SLUG`，最后再将仓库 variable `SIGNPATH_ENABLED` 设为 `true`。
 

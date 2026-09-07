@@ -3,7 +3,7 @@
 <artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
   <zip-file>
     <zip-file path="Qingmo-native-0.3-windows-x64.zip">
-      <pe-file path="QingmoNative.exe" original-filename="QingmoNative.exe" product-version="0.3.0.0">
+      <pe-file path="QingmoNative.exe" original-filename="QingmoNative.exe" product-name="轻墨原生版 / Qingmo Native" product-version="0.3.0.0">
         <authenticode-sign />
       </pe-file>
     </zip-file>

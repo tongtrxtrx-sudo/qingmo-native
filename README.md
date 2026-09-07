@@ -6,7 +6,7 @@ Windows 10 / 11 x64 上的本地 Markdown 编辑器。使用 Win32、RichEdit �
 
 ## 当前状态
 
-这是仍在验证的 0.3 原生版本。最后一次代码块回车修复已编译，尚未完成运行回归；完整验收及内存占用测量未完成。后续以对应提交的 [Windows native build CI 结果](https://github.com/tongtrxtrx-sudo/qingmo-native/actions)和发布说明为准。
+这是 0.3 原生预览版本。2026-09-07 的 [Windows CI](https://github.com/tongtrxtrx-sudo/qingmo-native/actions/runs/34078950323) 已通过四组单元测试与全部 34 项窗口集成检查，包括代码块回车、查找、全屏和文件列表。该结果来自 GitHub 托管的 Windows 环境；开发电脑的最终启动验收和内存测量仍未完成。具体下载包以对应发布说明及随附的 `verification.json` 为准。
 
 当前产物未签名。SignPath Foundation 免费签名尚未申请或获批，项目尚未获得签名赞助。有关计划与限制，见 [Code signing policy](docs/CODE_SIGNING.md)。
 
