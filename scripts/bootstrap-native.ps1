@@ -3,12 +3,16 @@ $taskRoot = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $taskRoot
 New-Item -ItemType Directory -Force -Path '.cache','.tools','third_party','dist\native','build\native' | Out-Null
 
-function Get-VerifiedArchive([string]$Name, [string]$Uri, [string]$Hash) {
+function Get-VerifiedArchive([string]$Name, [string[]]$Uris, [string]$Hash) {
     $archive = Join-Path $taskRoot ('.cache\' + $Name)
     if (!(Test-Path -LiteralPath $archive)) {
         Write-Host "Downloading $Name"
-        & curl.exe --fail --location --silent --show-error --output $archive $Uri
-        if ($LASTEXITCODE -ne 0) { throw "Download failed: $Name" }
+        $downloaded = $false
+        foreach ($uri in $Uris) {
+            & curl.exe --fail --location --silent --show-error --connect-timeout 15 --max-time 180 --output $archive $uri
+            if ($LASTEXITCODE -eq 0) { $downloaded = $true; break }
+        }
+        if (!$downloaded) { throw "Download failed: $Name" }
     }
     if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $Hash) {
         throw "Checksum mismatch: $archive. Remove this archive and retry."
@@ -23,12 +27,12 @@ if (!(Test-Path -LiteralPath $taskCompiler)) {
     if ($LASTEXITCODE -ne 0) { throw 'Compiler extraction failed' }
 }
 if (!(Test-Path -LiteralPath 'third_party\scintilla\include\Scintilla.h') -or !(Test-Path -LiteralPath 'third_party\lexilla\include\Lexilla.h') -or !(Test-Path -LiteralPath 'third_party\scintilla\License.txt') -or !(Test-Path -LiteralPath 'third_party\lexilla\License.txt')) {
-    $archive = Get-VerifiedArchive 'scite566.zip' 'https://www.scintilla.org/scite566.zip' '84D7DBE9D9CEB34961AD6FBDCF91A24F7CC1A2FD59D1851C0F5F4A0CDBFDE2F9'
+    $archive = Get-VerifiedArchive 'scite566.zip' @('https://sourceforge.net/projects/scintilla/files/SciTE/5.6.6/scite566.zip/download','https://www.scintilla.org/scite566.zip') '84D7DBE9D9CEB34961AD6FBDCF91A24F7CC1A2FD59D1851C0F5F4A0CDBFDE2F9'
     & tar.exe -xf $archive -C 'third_party' 'scintilla/include' 'scintilla/License.txt' 'lexilla/include' 'lexilla/License.txt'
     if ($LASTEXITCODE -ne 0) { throw 'Header extraction failed' }
 }
 if (!(Test-Path -LiteralPath 'dist\native\Scintilla.dll') -or !(Test-Path -LiteralPath 'dist\native\Lexilla.dll')) {
-    $archive = Get-VerifiedArchive 'wscite566.zip' 'https://www.scintilla.org/wscite566.zip' '2E8F2952E45F18B56ED94B3738F3129C61EA4EE833A1CB86A6A4005295D19B3F'
+    $archive = Get-VerifiedArchive 'wscite566.zip' @('https://sourceforge.net/projects/scintilla/files/SciTE/5.6.6/wscite566.zip/download','https://www.scintilla.org/wscite566.zip') '2E8F2952E45F18B56ED94B3738F3129C61EA4EE833A1CB86A6A4005295D19B3F'
     New-Item -ItemType Directory -Force -Path 'build\native\scite-bin' | Out-Null
     & tar.exe -xf $archive -C 'build\native\scite-bin'
     if ($LASTEXITCODE -ne 0) { throw 'Runtime extraction failed' }

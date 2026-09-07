@@ -1,0 +1,70 @@
+name: Sign approved release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: release-signing
+  cancel-in-progress: false
+
+jobs:
+  sign:
+    # Enable only after Foundation approval and policy/secret configuration.
+    if: github.ref == 'refs/heads/main' && vars.SIGNPATH_ENABLED == 'true'
+    runs-on: windows-2025
+    environment: release-signing
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify signing configuration is present
+        env:
+          SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
+          SIGNPATH_ORGANIZATION_ID: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          SIGNPATH_PROJECT_SLUG: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          SIGNPATH_SIGNING_POLICY_SLUG: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+        run: |
+          foreach ($taskKey in @('SIGNPATH_API_TOKEN','SIGNPATH_ORGANIZATION_ID','SIGNPATH_PROJECT_SLUG','SIGNPATH_SIGNING_POLICY_SLUG')) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($taskKey))) { throw "Missing $taskKey" }
+          }
+      - name: Build and test the source being signed
+        run: ./scripts/build-native.ps1 -Tests
+      - name: Package tested bytes
+        run: ./scripts/package-native.ps1 -SkipBuild
+      - name: Upload unsigned artifact for origin verification
+        id: unsigned
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: unsigned-signing-input
+          path: build/Qingmo-native-0.3-windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30
+      - name: Request approved SignPath signature
+        uses: SignPath/github-action-submit-signing-request@c92b958760219087e01f8d67a1669ed57afe2627 # v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 1200
+          output-artifact-directory: build/signed
+      - name: Check signed result
+        run: |
+          ./scripts/verify-signed-package.ps1 -UnsignedZip ./build/Qingmo-native-0.3-windows-x64.zip -SignedZip ./build/signed/Qingmo-native-0.3-windows-x64.zip
+      - name: Preserve verified signed candidate for release review
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: qingmo-native-signed-candidate
+          path: build/signed/*
+          if-no-files-found: error
+          retention-days: 30

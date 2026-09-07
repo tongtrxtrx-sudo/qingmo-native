@@ -25,3 +25,11 @@
 > Free code signing provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
 
 该句仅为未来配置模板，当前不表示赞助成立。实际团队角色和徽标应在批准后填写或启用。签名不能替代功能测试，也不意味着程序在所有 Windows 安全策略下必然可以运行。
+
+## 已准备的签名配置
+
+`packaging/signpath.xml` 仅匹配 GitHub 构建产物 ZIP 中的 `QingmoNative.exe`，并检查原始文件名和产品版本。升级产品版本或 ZIP 名称时需同步更新配置。两个上游 DLL 不在签名匹配范围内。
+
+`Sign approved release` 工作流仅允许从 `main` 手动触发，默认跳过签名。获批后，在 SignPath 配置受信任的 GitHub 构建来源和人工审批策略，在 GitHub 的 `release-signing` environment 配置签名提交令牌 `SIGNPATH_API_TOKEN`；令牌不写进源码。对应 variables 为 `SIGNPATH_ORGANIZATION_ID`、`SIGNPATH_PROJECT_SLUG`、`SIGNPATH_SIGNING_POLICY_SLUG`，最后再将仓库 variable `SIGNPATH_ENABLED` 设为 `true`。
+
+工作流先构建并通过所有测试，再上传同一份包供 SignPath 验证来源。返回后检查 EXE 的有效 Authenticode 签名，并逐文件检查其余内容未被更改；验证结果随签名候选包保存。候选包不会自动对外发布。此服务流程尚未获得账号配置，未完成实际签名验证。
