@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>轻墨 Qingmo</title>
+  <rect x="8" y="8" width="240" height="240" rx="56" fill="#3d7a60"/>
+  <path d="M80 45H151L190 84V199Q190 211 178 211H80Q68 211 68 199V57Q68 45 80 45Z" fill="#fffdf4"/>
+  <path d="M151 45V74Q151 84 161 84H190Z" fill="#c4d8c9"/>
+  <g fill="none" stroke="#3d7a60" stroke-width="11" stroke-linecap="round">
+    <path d="M94 115H162"/>
+    <path d="M94 145H162"/>
+    <path d="M94 175H138"/>
+  </g>
+</svg>

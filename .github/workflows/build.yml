@@ -1,0 +1,53 @@
+name: Windows native build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: windows-2025
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compile and run native unit and window tests
+        run: ./scripts/build-native.ps1 -Tests
+      - name: Package the tested executables
+        run: ./scripts/package-native.ps1 -SkipBuild
+      - name: Capture synthetic sample screens
+        run: |
+          $taskApp = Start-Process -FilePath (Join-Path $PWD 'dist/native/QingmoNative.exe') -ArgumentList '--snapshot' -PassThru -WindowStyle Hidden
+          if (!$taskApp.WaitForExit(60000)) { $taskApp.Kill(); throw 'Snapshot timed out' }
+          if ($taskApp.ExitCode -ne 0) { throw "Snapshot failed: $($taskApp.ExitCode)" }
+      - name: Upload unsigned preview ZIP
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: qingmo-native-unsigned
+          path: build/Qingmo-native-0.3-windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: native-validation
+          path: |
+            build/native/*.log
+            build/native/*.json
+            build/native/*.bmp
+          if-no-files-found: warn
+          retention-days: 30

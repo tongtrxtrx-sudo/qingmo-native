@@ -1,0 +1,12 @@
+.cache/
+.tools/
+build/
+dist/
+third_party/
+*.log
+*.pdb
+*.pfx
+*.p12
+*.key
+.env
+.env.*

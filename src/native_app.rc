@@ -1,0 +1,34 @@
+// Qingmo application resources, encoded as UTF-8.
+#pragma code_page(65001)
+#include "resource.h"
+
+// Paths are resolved from the project root; see scripts/build-native.ps1.
+IDR_APP_ICON ICON "assets/qingmo.ico"
+IDR_APP_MANIFEST 24 "src/native_app.manifest"
+
+1 VERSIONINFO
+ FILEVERSION 0,3,0,0
+ PRODUCTVERSION 0,3,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "FileDescription", "轻墨原生版 — Qingmo Native Markdown 编辑器\0"
+            VALUE "FileVersion", "0.3.0.0\0"
+            VALUE "InternalName", "QingmoNative\0"
+            VALUE "OriginalFilename", "QingmoNative.exe\0"
+            VALUE "ProductName", "轻墨原生版 / Qingmo Native\0"
+            VALUE "ProductVersion", "0.3.0.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0804, 1200
+    END
+END
